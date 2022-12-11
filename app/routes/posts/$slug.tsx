@@ -6,10 +6,10 @@ import invariant from 'tiny-invariant'
 
 import { getPost } from '~/models/post.server'
 
-export const loader = async ({ params }: LoaderArgs) => {
+export const loader = async ({ context, params }: LoaderArgs) => {
   invariant(params.slug, `params.slug is required`)
 
-  const post = await getPost(params.slug)
+  const post = await getPost(params.slug, context)
   invariant(post, `Post not found: ${params.slug}`)
 
   const html = marked(post.markdown)
