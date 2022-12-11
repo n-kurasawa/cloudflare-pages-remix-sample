@@ -3,13 +3,12 @@ import { json } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { marked } from 'marked'
 import invariant from 'tiny-invariant'
-
-import { getPost } from '~/models/post.server'
+import type { Post } from '~/type'
 
 export const loader = async ({ context, params }: LoaderArgs) => {
   invariant(params.slug, `params.slug is required`)
 
-  const post = await getPost(params.slug, context)
+  const post: Post = context.POSTS_KV.get(params.slug, { type: 'json' })
   invariant(post, `Post not found: ${params.slug}`)
 
   const html = marked(post.markdown)
