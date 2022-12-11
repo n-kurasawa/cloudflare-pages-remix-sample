@@ -3,17 +3,10 @@ import { json } from '@remix-run/cloudflare'
 import { Link, useLoaderData } from '@remix-run/react'
 import type { Post } from '~/type'
 
-export const loader = async ({ context }: LoaderArgs) => {
-  const kv = context.POSTS_KV as KVNamespace
-  const { keys } = await kv.list()
-
-  let posts: Post[] = []
-  for (const key of keys) {
-    const post: Post | null = await kv.get(key.name, { type: 'json' })
-    if (post) {
-      posts.push(post)
-    }
-  }
+export const loader = async ({ request }: LoaderArgs) => {
+  const url = new URL(request.url)
+  const res = await fetch(`${url.origin}/api/posts`)
+  const posts: Post[] = await res.json()
   return json({ posts })
 }
 
