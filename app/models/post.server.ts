@@ -7,7 +7,13 @@ type Post = {
 }
 
 export async function getPosts(context: AppLoadContext): Promise<Array<Post>> {
-  return await context.POSTS_KV.list()
+  const { keys } = await context.POSTS_KV.list()
+  let posts = []
+  for (const key of keys) {
+    const post = await context.POSTS_KV.get(key.name, { type: 'json' })
+    posts.push(post)
+  }
+  return posts
 }
 
 export async function getPost(
