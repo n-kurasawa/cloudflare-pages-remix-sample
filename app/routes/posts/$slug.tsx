@@ -8,7 +8,8 @@ import type { Post } from '~/type'
 export const loader = async ({ context, params }: LoaderArgs) => {
   invariant(params.slug, `params.slug is required`)
 
-  const post: Post = context.POSTS_KV.get(params.slug, { type: 'json' })
+  const kv = context.POSTS_KV as KVNamespace
+  const post: Post | null = await kv.get(params.slug, { type: 'json' })
   invariant(post, `Post not found: ${params.slug}`)
 
   const html = marked(post.markdown)
